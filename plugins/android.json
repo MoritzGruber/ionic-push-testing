@@ -1,0 +1,34 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "com.moritzgruber.lapica"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.moritzgruber.lapica"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "com.moritzgruber.lapica"
+        },
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "com.moritzgruber.lapica"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.moritzgruber.lapica"
+        },
+        "ionic-plugin-keyboard": {
+            "PACKAGE_NAME": "com.moritzgruber.lapica"
+        },
+        "phonegap-plugin-push": {
+            "SENDER_ID": "GCM_PROJECT_NUMBER",
+            "PACKAGE_NAME": "com.moritzgruber.lapica"
+        }
+    },
+    "dependent_plugins": {}
+}
