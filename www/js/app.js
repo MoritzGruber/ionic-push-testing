@@ -1,7 +1,10 @@
 angular.module('starter', ['ionic','ionic.service.core', 'ionic.service.push'])
 
 .run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
+  
+})
+.controller('testCtrl', function ($ionicPlatform, $ionicPush, $scope) {
+    $ionicPlatform.ready(function() {
     Ionic.io();
     var push = new Ionic.Push({
       "onNotification": function (notification) {
@@ -14,9 +17,10 @@ angular.module('starter', ['ionic','ionic.service.core', 'ionic.service.push'])
       }
     });
     var user = Ionic.User.current();
+    console.log('user currently: '+JSON.stringify(user));
     if(!user.id){
       //user.id = Ionic.User.anonymousId();
-      user.save();
+      //user.save();
     }
     var push = new Ionic.Push({
       "onNotification": function (notification) {
@@ -28,16 +32,44 @@ angular.module('starter', ['ionic','ionic.service.core', 'ionic.service.push'])
         }
       }
     });
-    push.register(function (token) {
-            console.log("Got Token:", token.token);
 
-            // now we have token, so add it to user
-            //push.addTokenToUser(user);
-            console.log(push);
-            // don't forget to save user to Ionic Platform with our new token
-            //user.save();
-    });
-    // set this user as current, so we can acess him later
-        //Ionic.User.current(user);
+    var user = Ionic.User.current();
+    console.log("User:"+user);
+    var callback = function(pushToken) {
+      console.log('Registered token:', pushToken.token);
+      //user.addPushToken(pushToken);
+      //user.save(); // you NEED to call a save after you add the token
+    }
+    
+    // IONIC USER PART
+    push.register(callback);
+
+    var fakeDetails = {
+    'email':'asdfasdfasasdfafsfasfasdfasasfasf@gmail.com',
+    'password':'123345'
+    };
+
+    $scope.customRegistration= function() {
+        //this will work one time
+            
+        Ionic.Auth.signup(fakeDetails).then(function(newUser) {
+            console.log('signup worked ok, here is the new user '+JSON.stringify(newUser));
+            //what's the user ob like now?
+            var callback = function(pushToken) {
+            console.log('Registered token:', pushToken.token);
+            //newUser.addPushToken(pushToken);
+            //newUser.save(); // you NEED to call a save after you add the token
+            }
+            
+            // IONIC USER PART
+            push.register(callback);
+            //are they logged on? the docs imply NO
+            console.log('newly signed up user logged in?',user.isAuthenticated());  
+
+        }, function(error) {
+            console.log('signed failed with '+JSON.stringify(error));
+        });
+    };
   });
-})
+  });
+  

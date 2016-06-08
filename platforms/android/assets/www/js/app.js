@@ -1,7 +1,10 @@
 angular.module('starter', ['ionic','ionic.service.core', 'ionic.service.push'])
 
 .run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
+  
+})
+.controller('testCtrl', function (ionicPlatform, $cordovaPush) {
+    $ionicPlatform.ready(function() {
     Ionic.io();
     var push = new Ionic.Push({
       "onNotification": function (notification) {
@@ -15,7 +18,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'ionic.service.push'])
     });
     var user = Ionic.User.current();
     if(!user.id){
-      //user.id = Ionic.User.anonymousId();
+      user.id = Ionic.User.anonymousId();
       user.save();
     }
     var push = new Ionic.Push({
@@ -28,16 +31,16 @@ angular.module('starter', ['ionic','ionic.service.core', 'ionic.service.push'])
         }
       }
     });
-    push.register(function (token) {
-            console.log("Got Token:", token.token);
 
-            // now we have token, so add it to user
-            //push.addTokenToUser(user);
-            console.log(push);
-            // don't forget to save user to Ionic Platform with our new token
-            //user.save();
-    });
-    // set this user as current, so we can acess him later
-        //Ionic.User.current(user);
+    var user = Ionic.User.current();
+    console.log("User:"+user);
+    var callback = function(pushToken) {
+      console.log('Registered token:', pushToken.token);
+      user.addPushToken(pushToken);
+      user.save(); // you NEED to call a save after you add the token
+    }
+
+    push.register(callback);
   });
-})
+  });
+  
