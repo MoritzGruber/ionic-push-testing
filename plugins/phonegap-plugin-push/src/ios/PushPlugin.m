@@ -315,9 +315,12 @@
             [self setGcmSandbox:@YES];
         }
 
-        if (notificationMessage)			// if there is a pending startup notification
-            [self notificationReceived];	// go ahead and process it
-
+        if (notificationMessage) {			// if there is a pending startup notification
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // delay to allow JS event handlers to be setup
+                [self performSelector:@selector(notificationReceived) withObject:nil afterDelay: 0.5];
+            });
+        }
     }];
 }
 
@@ -504,6 +507,7 @@
         [pluginResult setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
 
+        self.coldstart = NO;
         self.notificationMessage = nil;
     }
 }
@@ -525,6 +529,15 @@
     NSInteger badge = [UIApplication sharedApplication].applicationIconBadgeNumber;
 
     CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(int)badge];
+    [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
+}
+
+- (void)clearAllNotifications:(CDVInvokedUrlCommand *)command
+{
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+
+    NSString* message = [NSString stringWithFormat:@"cleared all notifications"];
+    CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:message];
     [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
 }
 
